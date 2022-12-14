@@ -8,6 +8,35 @@
 
 using namespace std;
 
+/**
+ * Compute the Euclidean distance matrix
+ * @param matrix: interpret x as an matrix with size n*d
+ * @param index: see energy distance for reference
+ */
+std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<double>> &matrix, double index)
+{
+    uint n = (uint)matrix.size();
+    uint d = (uint)matrix[0].size();
+    std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n));
+
+    double diff_sum, diff;
+    for (uint i = 1; i < n; i++)
+    {
+        distance_matrix[i][i] = 0.0;
+        for (uint j = 0; j < i; j++)
+        {
+            diff_sum = 0.0;
+            for (uint k = 0; k < d; k++)
+            {
+                diff = matrix[i][k] - matrix[j][k];
+                diff_sum += diff * diff;
+            }
+            distance_matrix[i][j] = distance_matrix[j][i] = pow(sqrt(diff_sum), index);
+        }
+    }
+    return distance_matrix;
+}
+
 void impMat(std::vector<std::vector<double>> &A)
 {
     for (int i = 0; i < A.size(); i++)
@@ -26,16 +55,16 @@ void printVec(std::vector<double> &v)
         std::cout << i << ' ';
 }
 
-std::vector<std::vector<double>> makeOnes(double n)
+std::vector<std::vector<double>> makeOnes(double n, double d)
 {
     std::vector<std::vector<double>> mat;
     std::vector<double> temp;
 
     for (double i = 0; i < n; i++)
     {
-        for (double j = 0; j < n; j++)
+        for (double j = 0; j < d; j++)
         {
-            temp.push_back(i);
+            temp.push_back(1);
         }
         mat.push_back(temp);
         temp.clear();
@@ -195,13 +224,21 @@ int main()
     //     temp.clear();
     // }
 
-    vector<vector<double>> mat = makeCovariate(5, 3);
-    impMat(mat);
+    vector<vector<double>> X = makeCovariate(5, 3);
+    impMat(X);
 
-    vector<vector<double>> res = compute_gaussian_kernel_estimate(mat, 0.5);
+    vector<vector<double>> dx = Euclidean_distance(X, 1);
+    impMat(dx);
 
-    impMat(res);
+    vector<vector<double>> Z = makeOnes(5, 3);
+    vector<vector<double>>
+        dz = compute_gaussian_kernel_estimate(Z, 1);
+
+    impMat(dz);
 
     // printVec(cdcov);
+    vector<double> cov = compute_condition_distance_covariance_crude(dx, dx, dz);
+    printVec(cov);
+
     return 0;
 }
