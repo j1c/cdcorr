@@ -168,13 +168,13 @@ std::vector<std::vector<double>> read_csv(std::string path, int nrow, int ncol)
 
 int main()
 {
-    std::vector<std::vector<double>> x = read_csv("../data/x.csv", 100, 3);
-    std::vector<std::vector<double>> y = read_csv("../data/y.csv", 100, 3);
-    std::vector<std::vector<double>> z = read_csv("../data/z.csv", 100, 3);
+    std::vector<std::vector<double>> x = read_csv("../data/x_10.csv", 10, 3);
+    std::vector<std::vector<double>> y = read_csv("../data/y_10.csv", 10, 3);
+    std::vector<std::vector<double>> z = read_csv("../data/z_10.csv", 10, 3);
 
     std::vector<std::vector<double>> dx = Euclidean_distance(x, 1);
     std::vector<std::vector<double>> dy = Euclidean_distance(y, 1);
-    std::vector<std::vector<double>> dz = compute_gaussian_kernel_estimate(z, 0.25);
+    std::vector<std::vector<double>> dz = compute_gaussian_kernel_estimate(z, 0.5);
 
     // printMat(dz);
 

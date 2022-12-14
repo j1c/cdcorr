@@ -13,3 +13,18 @@ def example1(n):
     Z = np.random.multivariate_normal(mean, cov, size=n)
     
     return X, Y, Z
+
+
+def compute_kernel(X, sigma):
+    """
+    X : (n_samples, n_dim)
+    sigma : float
+    """
+
+    d = X.shape[1]
+    denom = np.power(2 * np.pi, d / 2.0) * np.power(sigma, d / 2)
+    constant = 1 / denom
+
+    kern = pairwise_kernels(X, metric="rbf", gamma=1 / (sigma * 2)) * constant
+
+    return kern

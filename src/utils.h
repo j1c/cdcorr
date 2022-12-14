@@ -85,6 +85,18 @@ void printMat(std::vector<std::vector<double>> &A)
     }
 }
 
+void printMatInt(std::vector<std::vector<uint>> &A)
+{
+    for (int i = 0; i < A.size(); i++)
+    {
+        for (int j = 0; j < A[i].size(); j++)
+        {
+            std::cout << A[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 void printVec(std::vector<double> &A)
 {
     for (int i = 0; i < A.size(); i++)
@@ -163,6 +175,29 @@ std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<d
     }
 
     return weight_distance_anova_table;
+}
+
+uint sample_multinomial_distribution(std::vector<double> &probability, std::mt19937_64 &random_number_generator)
+{
+    std::discrete_distribution<uint> multinomial_sampler(probability.begin(), probability.end());
+    return multinomial_sampler(random_number_generator);
+}
+
+std::vector<std::vector<uint>> generate_random_sample_index(uint replication_number,
+                                                            std::vector<std::vector<double>> probability_matrix,
+                                                            std::mt19937_64 &random_number_generator)
+{
+    std::vector<std::vector<uint>> random_sample_index(replication_number,
+                                                       std::vector<uint>(probability_matrix.size()));
+    for (uint i = 0; i < probability_matrix.size(); ++i)
+    {
+        for (uint j = 0; j < replication_number; ++j)
+        {
+            random_sample_index[j][i] = sample_multinomial_distribution(probability_matrix[i], random_number_generator);
+        }
+    }
+
+    return random_sample_index;
 }
 
 #endif // SRC_UTILITY_H
