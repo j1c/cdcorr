@@ -200,4 +200,29 @@ std::vector<std::vector<uint>> generate_random_sample_index(uint replication_num
     return random_sample_index;
 }
 
+std::vector<std::vector<double>> bandwidth_selection(std::vector<std::vector<double>> &conditional_mat)
+{
+    std::vector<std::vector<double>> bandwidth_matrix;
+    std::vector<double> conditional_vec;
+    for (int j = 0; j < conditional_mat[0].size(); ++j)
+    {
+        conditional_vec.clear();
+        for (std::vector<double> conditional_record : conditional_mat)
+        {
+            conditional_vec.push_back(conditional_record[j]);
+        }
+        bandwidth_matrix[j][j] = bandwidth_selection_vector_stats_bwnrd0(conditional_vec);
+    }
+
+    return bandwidth_matrix;
+};
+
+double bandwidth_selection_vector_stats_bwnrd0(std::vector<double> &conditional_vec)
+{
+    double iqr = quartile_value(conditional_vec, 0.75) - quartile_value(conditional_vec, 0.25);
+    double sd = vector_sd(conditional_vec);
+    double lo = std::min(sd, iqr / 1.34);
+    return 0.9 * lo * pow(conditional_vec.size(), -0.2);
+};
+
 #endif // SRC_UTILITY_H
